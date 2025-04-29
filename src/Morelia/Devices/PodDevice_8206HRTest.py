@@ -15,7 +15,7 @@ __license__     = "New BSD License"
 __copyright__   = "Copyright (c) 2025, Mackenzie Meier"
 __email__       = "sales@pinnaclet.com"
 
-class Pod8206HRTest(Pod) :
+class Pod8206HRTest(AquisitionDevice) :
     """
     POD_8206HRTest handles communication using an 8206HR Testing Pod device
 
@@ -56,24 +56,24 @@ class Pod8206HRTest(Pod) :
     # ------------ OVERWRITE ------------           ------------------------------------------------------------------------------------------------------------------------
 
 
-    def ReadPODpacket(self, validateChecksum: bool = True, timeout_sec: int | float = 5) -> Packet:
-        """Reads a complete POD packet, either in standard or binary format, beginning with STX and \
-        ending with ETX. Reads first STX and then starts recursion. 
+    # def ReadPODpacket(self, validateChecksum: bool = True, timeout_sec: int | float = 5) -> Packet:
+    #     """Reads a complete POD packet, either in standard or binary format, beginning with STX and \
+    #     ending with ETX. Reads first STX and then starts recursion. 
 
-        Args:
-            validateChecksum (bool, optional): Set to True to validate the checksum. Set to False to \
-                skip validation. Defaults to True.
-            timeout_sec (int|float, optional): Time in seconds to wait for serial data. \
-                Defaults to 5. 
+    #     Args:
+    #         validateChecksum (bool, optional): Set to True to validate the checksum. Set to False to \
+    #             skip validation. Defaults to True.
+    #         timeout_sec (int|float, optional): Time in seconds to wait for serial data. \
+    #             Defaults to 5. 
 
-        Returns:
-            Packet: POD packet beginning with STX and ending with ETX. This may be a \
-                standard packet, binary packet, or an unformatted packet (STX+something+ETX). 
-        """
-        packet: Packet = super().ReadPODpacket(validateChecksum, timeout_sec)
-        # check for special packets
-        #if(isinstance(packet, PacketStandard)) : 
-            #if(packet.CommandNumber() == 106) : # 106, 'GET TTL PORT'
-                #packet.SetCustomPayload(self._TranslateTTLbyte_ASCII, (packet.payload,))
-        # return packet
-        return packet
+    #     Returns:
+    #         Packet: POD packet beginning with STX and ending with ETX. This may be a \
+    #             standard packet, binary packet, or an unformatted packet (STX+something+ETX). 
+    #     """
+    #     packet: Packet = super().ReadPODpacket(validateChecksum, timeout_sec)
+    #     # check for special packets
+    #     #if(isinstance(packet, PacketStandard)) : 
+    #         #if(packet.CommandNumber() == 106) : # 106, 'GET TTL PORT'
+    #             #packet.SetCustomPayload(self._TranslateTTLbyte_ASCII, (packet.payload,))
+    #     # return packet
+    #     return packet
