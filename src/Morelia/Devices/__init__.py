@@ -7,5 +7,6 @@ from Morelia.Devices.PodDevice_8401HR    import Pod8401HR
 from Morelia.Devices.PodDevice_8229      import Pod8229
 from Morelia.Devices.PodDevice_8480SC    import Pod8480SC
 from Morelia.Devices.PodDevice_8274D     import Pod8274D
+from Morelia.Devices.PodDevice_8206HRTest import Pod8206HRTest
 # sub-package access
 from Morelia.Devices import SerialPorts
