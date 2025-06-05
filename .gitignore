@@ -6,3 +6,5 @@ testing.py
 *.dtmp
 *.egg-info
 auth.json
+/build
+/venv

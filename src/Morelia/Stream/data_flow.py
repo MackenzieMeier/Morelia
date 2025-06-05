@@ -42,6 +42,7 @@ class DataFlow:
         self._manual_stop_events: list[mp.Event] = [] #events that stop collection stored here.
         self._network = network
         self._workers: list[mp.Process] = []
+        # self.done = False
 
     def stop_collection(self) -> None:
         """Stop collecting data."""
@@ -56,17 +57,22 @@ class DataFlow:
 
         self._workers = []
 
+    # def wait(self):
+    #     return self.done
+
     def collect_for_seconds(self, duration_sec: float) -> None:
         """Collect data for `duration_sec` seconds.
 
         :param duration_sec: How long to collect data for in seconds.
         :type duration_sec: float
         """
+        # self.done = False
         self._start_collecting(duration_sec)
 
         for worker in self._workers:
             worker.join()
             worker.close()
+            self.done = True
 
         #clear out manual stop events.
         self._manual_stop_events = []

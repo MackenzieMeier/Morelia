@@ -14,7 +14,7 @@ import functools as ft
 
 from Morelia.Stream.sink import SinkInterface
 from Morelia.packet.data import DataPacket
-from Morelia.Devices import Pod8206HR, Pod8401HR, Pod8274D, AquisitionDevice
+from Morelia.Devices import Pod8206HR, Pod8401HR, Pod8274D, Pod8206HRTest, AquisitionDevice
 
 class EDFSink(SinkInterface):
     """Stream data to an EDF file.
@@ -47,12 +47,24 @@ class EDFSink(SinkInterface):
         elif isinstance(self._pod, Pod8274D):
                 self._channels('length_in_bytes', 'data')
 
+        elif isinstance(self._pod, Pod8206HRTest):
+                self._channels = ('DAC_A', 'DAC_B', 'DAC_C')
 
         self._buffer = [ [] for _ in self._channels ]
 
     def __enter__(self) -> Self:
 
-        EDF_PHYSICAL_BOUND = 2046
+        EDF_PHYSICAL_BOUND = 2500000#2046
+        if isinstance(self._pod, Pod8206HRTest):
+            for x in range(5):
+                self._pod.WriteRead('GET AMP')
+            response = self._pod.WriteRead('GET AMP')
+            payload_str = response.raw_packet[1:-1] #takes off STX and ETX
+            # print(payload_str)
+            hex_payload = payload_str[4:8].decode('ascii') #gets payload and turns b'0028' into 0028
+            payload_int = int(hex_payload, 16) #turns hex 0028 into int 40
+            print("EDF Physical bound: " + str((payload_int/65535) * 2500000) )
+            EDF_PHYSICAL_BOUND = int((payload_int/65535) * 2500000) #38.14755 multiplier to convert amp to volt #2500000#2046
         EDF_DIGITAL_MAX = 32767
         EDF_DIGITAL_MIN = -32768
 
@@ -62,7 +74,7 @@ class EDFSink(SinkInterface):
            self._edf_writer.setSignalHeader( idx, {
                 'label'         :  channel,
                 'dimension'     :  'uV',
-                'sample_frequency'   :  self._pod.sample_rate,
+                'sample_frequency'   :  self._pod.sample_rate, #1000
                 'physical_max'  :  EDF_PHYSICAL_BOUND,
                 'physical_min'  : -EDF_PHYSICAL_BOUND,
                 'digital_max'   :  EDF_DIGITAL_MAX,
@@ -108,6 +120,11 @@ class EDFSink(SinkInterface):
             self._buffer[7].append(float(packet.ttl2))
             self._buffer[8].append(float(packet.ttl3))
             self._buffer[9].append(float(packet.ttl4))
+
+        elif isinstance(self._pod, Pod8206HRTest):
+            self._buffer[0].append(packet.ch1)
+            self._buffer[1].append(packet.ch2)
+            self._buffer[2].append(packet.ch3)
 
         if len(self._buffer[0]) >= self._pod.sample_rate:
             self._write_buffer_to_edf()

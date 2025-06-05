@@ -35,6 +35,7 @@ class AquisitionDevice(Pod):
     @property
     def sample_rate(self) -> int:
         if self._sample_rate is None:
+            print(self.WriteRead('GET SAMPLE RATE').raw_packet)
             self._sample_rate = self.WriteRead('GET SAMPLE RATE').payload
         return self._sample_rate
 

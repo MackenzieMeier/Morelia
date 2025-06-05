@@ -11,7 +11,7 @@ import csv
 from typing import Self
 
 from Morelia.Stream.sink import SinkInterface
-from Morelia.Devices import AquisitionDevice, Pod8274D, Pod8206HR, Pod8401HR
+from Morelia.Devices import AquisitionDevice, Pod8274D, Pod8206HR, Pod8401HR, Pod8206HRTest
 from Morelia.packet.data import DataPacket
 
 class CSVSink(SinkInterface):
@@ -45,6 +45,9 @@ class CSVSink(SinkInterface):
 
         elif isinstance(self._pod, Pod8274D):
                 self._csv_writer.writerow(('time', 'length_in_bytes', 'data'))
+
+        elif isinstance(self._pod, Pod8206HRTest):
+                self._csv_writer.writerow(('time', 'DAC_A', 'DAC_B', 'DAC_C'))
 
         else:
             raise ValueError(f'Device "{self._pod.device_name}" cannot be streamed from!')

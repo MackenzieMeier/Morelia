@@ -344,7 +344,12 @@ class Pod :
                 be a standard packet, binary packet, or an unformatted packet (STX+something+ETX). 
         """
         self.WritePacket(cmd, payload)
+        # print("in WriteRead after writing")
+        # print(self.WritePacket(cmd, payload).command_number)
         r = self.ReadPODpacket(validateChecksum)
+        # print("in WriteRead after reading")
+        # print(r.command_number)
+        # print("readPODpacket "+ str(self.ReadPODpacket(validateChecksum).command_number))
         return(r)
 
 
@@ -415,9 +420,11 @@ class Pod :
         """
         # start packet with STX
         packet: bytes = PodPacket.STX
+        # print(packet)
         # read next 4 bytes of the command number 
         cmd: bytes = self._Read_GetCommand(validateChecksum=validateChecksum)
         packet += cmd 
+        # print(packet)
         # return packet if cmd ends in ETX
         if(cmd[len(cmd)-1].to_bytes(1,'big') == PodPacket.ETX) : 
             return(PodPacket(packet))
@@ -460,11 +467,13 @@ class Pod :
                 cmd = b
             else : 
                 cmd += b
+            # print("build command packet " + str(cmd))
             # start over if STX is found 
             if(b == PodPacket.STX ) : 
                 self._ReadPODpacket_Recursive(validateChecksum=validateChecksum)
             # return if ETX is found
             if(b == PodPacket.ETX ) : 
+                # print("reutnr if ETS is found" + str(cmd))
                 return(cmd)
         # return complete 4 byte long command packet
         return(cmd)
